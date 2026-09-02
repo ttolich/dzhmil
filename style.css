@@ -1,0 +1,202 @@
+:root {
+  --bg-color: #f7f4ea;
+  --text-color: #1f1f1f;
+  --accent-color: #f2c300;
+  --accent-dark: #2b2b2b;
+  --card-bg: #ffffff;
+  --max-width: 920px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Noto Sans",
+    "Noto Sans CJK SC",
+    "Noto Sans CJK TC",
+    "Noto Sans JP",
+    "Noto Sans KR",
+    "Microsoft YaHei",
+    "Microsoft JhengHei",
+    Arial,
+    sans-serif;
+  color: var(--text-color);
+  background:
+    radial-gradient(circle at top, rgba(242, 195, 0, 0.25), transparent 32rem),
+    var(--bg-color);
+  line-height: 1.6;
+}
+
+.site-header {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 48px 20px 24px;
+  text-align: center;
+}
+
+.logo-block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.site-logo {
+  display: block;
+  width: min(220px, 70vw);
+  height: auto;
+}
+
+.logo-title-block {
+  width: 100%;
+  text-align: center;
+}
+
+.logo-title-block .site-logo {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.random-slogan,
+.oval-button {
+  display: inline-block;
+  padding: 14px 22px;
+  border: 2px solid var(--accent-dark);
+  border-radius: 999px;
+  background: var(--card-bg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  font-weight: 600;
+  color: var(--accent-dark);
+}
+
+.random-slogan {
+  max-width: 100%;
+  font-size: clamp(1rem, 2.2vw, 1.35rem);
+}
+
+.oval-button {
+  padding: 14px 24px;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.oval-button:hover,
+.oval-button:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+}
+
+.oval-button.active {
+  background: var(--accent-color);
+}
+
+.page-content {
+  max-width: var(--max-width);
+  margin: 0 auto 60px;
+  padding: 32px 24px 48px;
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: 28px;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.08);
+}
+
+.page-content h1 {
+  margin-top: 0;
+  margin-bottom: 18px;
+  font-size: clamp(2.2rem, 6vw, 4rem);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+
+.page-content p {
+  margin: 0 0 18px;
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+}
+
+.intro-section,
+.slogan-section,
+.menu-section,
+.status-section,
+.authors-section {
+  text-align: center;
+}
+
+.characteristics-section,
+.characteristics-section h2 {
+  text-align: left;
+}
+
+.characteristics-list {
+  margin-top: 0;
+  padding-left: 1.4rem;
+}
+
+.characteristics-list li {
+  margin-bottom: 0.7rem;
+}
+
+.oval-button-menu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .site-header {
+    padding-top: 32px;
+  }
+
+  .random-slogan {
+    border-radius: 20px;
+  }
+
+  .page-content {
+    margin-left: 14px;
+    margin-right: 14px;
+    border-radius: 22px;
+  }
+
+  .oval-button-menu {
+    gap: 10px;
+  }
+
+  .oval-button {
+    width: 100%;
+    max-width: 260px;
+    border-radius: 20px;
+  }
+
+
+.logo-link {
+  display: inline-block;
+  text-decoration: none;
+}
+
+.logo-link img {
+  display: block;
+}
+
+}
+
+.oval-button-menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.menu-break {
+    flex-basis: 100%;
+    height: 0;
+}
+
