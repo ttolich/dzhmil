@@ -1,0 +1,93 @@
+<style>
+/* Optional styling - remove or adapt to the site theme */
+.dzhmil-settings table { border-collapse: collapse; width: 100%; margin: 0.5em 0 1.5em; }
+.dzhmil-settings th, .dzhmil-settings td { border: 1px solid rgba(128,128,128,.45); padding: .45em .6em; text-align: left; vertical-align: top; }
+.dzhmil-settings th { background: rgba(128,128,128,.15); }
+.dzhmil-settings td:nth-child(2), .dzhmil-settings td:nth-child(3) { white-space: nowrap; }
+.dzhmil-settings code { font-size: .92em; word-break: break-word; }
+.dzhmil-settings .table-wrap { overflow-x: auto; }
+</style>
+<section class="dzhmil-settings" lang="uk">
+<h2>Налаштування скетча «Джміль» (версія 1.7)</h2>
+<p>Налаштування розташовані на початку скетча (файл main.cpp) у вигляді констант. Після зміни значення скетч потрібно заново залити в контролер. Перевіряйте кожну зміну в реальних випробуваннях: параметри зон реакції та фільтрації безпосередньо впливають на безпеку користувача.</p>
+<h3>1. Зони реакції на перешкоди</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Параметр</th><th>За замовчуванням</th><th>Одиниця</th><th>Опис і вплив</th></tr></thead><tbody>
+<tr><td><code>CENTER_ALERT_DISTANCE_MM</code></td><td>1050</td><td>мм</td><td>Відстань, з якої центральний датчик починає попереджати. Більше — раніше попередження, але більше зайвих спрацювань у вузьких місцях. Менше — менше часу на реакцію. Тримайте більшою за VIBRO_VERY_FAR_BORDER_MM, інакше ритм «дуже далеко» не використовується.</td></tr>
+<tr><td><code>SIDE_ALERT_DISTANCE_MM</code></td><td>900</td><td>мм</td><td>Те саме для лівого й правого датчиків. Зменште, якщо стіни у вузьких коридорах викликають постійні сигнали.</td></tr>
+<tr><td><code>DIRECTION_GROUP_MARGIN_MM</code></td><td>300</td><td>мм</td><td>Якщо кілька датчиків бачать перешкоди в межах цієї різниці від найближчої, їхні мотори вібрують одночасно. Більше — частіше вібрують кілька моторів (менш точний напрямок). Менше — вібрує лише бік найближчої перешкоди.</td></tr>
+<tr><td><code>ALERT_HYSTERESIS_MM</code></td><td>80</td><td>мм</td><td>Запас при виході із зони: сигнал вимикається, лише коли перешкода відійшла за межу зони більше ніж на це значення. Більше — стабільніше біля межі, але сигнал зникає пізніше. Менше — можливе «смикання» моторів біля межі зони.</td></tr>
+</tbody></table></div>
+<h3>2. Ритм вібрації за відстанню</h3>
+<p>Головна підказка для користувача — довжина паузи: що ближче перешкода, то коротша пауза. Межі зон мають іти за спаданням: VERY_FAR &gt; FAR &gt; MEDIUM &gt; CLOSE.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Параметр</th><th>За замовчуванням</th><th>Одиниця</th><th>Опис і вплив</th></tr></thead><tbody>
+<tr><td><code>VIBRO_VERY_FAR_BORDER_MM</code></td><td>850</td><td>мм</td><td>Межа між зонами «дуже далеко» (за цією межею) та «далеко».</td></tr>
+<tr><td><code>VIBRO_FAR_BORDER_MM</code></td><td>700</td><td>мм</td><td>Межа між зонами «далеко» та «середня відстань».</td></tr>
+<tr><td><code>VIBRO_MEDIUM_BORDER_MM</code></td><td>550</td><td>мм</td><td>Межа між зонами «середня відстань» та «близько».</td></tr>
+<tr><td><code>VIBRO_CLOSE_BORDER_MM</code></td><td>400</td><td>мм</td><td>Межа між зонами «близько» та «дуже близько».</td></tr>
+<tr><td><code>PATTERN_VERY_FAR</code></td><td>120 / 1200</td><td>мс (імпульс / пауза)</td><td>Зона «дуже далеко»: рідкий одиночний імпульс.</td></tr>
+<tr><td><code>PATTERN_FAR</code></td><td>120 / 800</td><td>мс (імпульс / пауза)</td><td>Зона «далеко»: помітно частіші імпульси.</td></tr>
+<tr><td><code>PATTERN_MEDIUM</code></td><td>140 / 450</td><td>мс (імпульс / пауза)</td><td>Зона «середня відстань».</td></tr>
+<tr><td><code>PATTERN_CLOSE</code></td><td>170 / 180</td><td>мс (імпульс / пауза)</td><td>Зона «близько».</td></tr>
+<tr><td><code>PATTERN_VERY_CLOSE</code></td><td>300 / 60</td><td>мс (імпульс / пауза)</td><td>Зона «дуже близько»: майже безперервна вібрація.</td></tr>
+</tbody></table></div>
+<h3>3. Датчики та фільтрація</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Параметр</th><th>За замовчуванням</th><th>Одиниця</th><th>Опис і вплив</th></tr></thead><tbody>
+<tr><td><code>SENSOR_TIMING_BUDGET_US</code></td><td>50000</td><td>мкс</td><td>Час одного вимірювання датчика. Більше — менше шуму й краща робота на сонці та на великих відстанях, але повільніше оновлення. Не має перевищувати SENSOR_CONTINUOUS_PERIOD_MS (50000 мкс = 50 мс).</td></tr>
+<tr><td><code>SENSOR_CONTINUOUS_PERIOD_MS</code></td><td>70</td><td>мс</td><td>Інтервал між вимірюваннями. Менше — швидша реакція, але більше навантаження на шину I2C і більше споживання. Не менше за час вимірювання (SENSOR_TIMING_BUDGET_US).</td></tr>
+<tr><td><code>SENSOR_MAX_VALID_DISTANCE_MM</code></td><td>5000</td><td>мм</td><td>Показання далі за це значення вважаються недійсними. Зазвичай не змінюється.</td></tr>
+<tr><td><code>FILTER_WINDOW</code></td><td>3</td><td>шт.</td><td>Кількість останніх вимірювань у медіанному фільтрі (непарне число: 3 або 5). Більше — стійкіше до завад, але повільніша реакція.</td></tr>
+<tr><td><code>FILTER_MIN_SAMPLES</code></td><td>2</td><td>шт.</td><td>Скільки вимірювань підтверджують перешкоду. 2 = два поспіль (затримка ≈ 140 мс). Значення 1 дає найшвидшу реакцію, але одиничний хибний вимір може викликати вібрацію (не рекомендується). Не більше за FILTER_WINDOW.</td></tr>
+<tr><td><code>MAX_BAD_READS</code></td><td>3</td><td>шт.</td><td>Скільки недійсних вимірювань поспіль потрібно, щоб датчик вважався «порожнім» (перешкоди немає). До цього зберігається попереднє значення.</td></tr>
+<tr><td><code>SENSOR_STALL_MS</code></td><td>500</td><td>мс</td><td>Якщо датчик не дав нових даних довше за цей час, він вважається завислим, а його останнє значення більше не враховується.</td></tr>
+<tr><td><code>SENSOR_READ_INTERVAL_MS</code></td><td>10</td><td>мс</td><td>Як часто перевіряється готовність нових даних датчиків. Зазвичай не змінюється.</td></tr>
+<tr><td><code>I2C_CLOCK_HZ</code></td><td>100000</td><td>Гц</td><td>Швидкість шини I2C. 100 кГц надійніше при довгих дротах; 400 кГц швидше, але чутливіше до проводки та завад.</td></tr>
+</tbody></table></div>
+<h3>4. Контроль батареї (1S2P)</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Параметр</th><th>За замовчуванням</th><th>Одиниця</th><th>Опис і вплив</th></tr></thead><tbody>
+<tr><td><code>BATTERY_DIVIDER_R_TOP_KOHM</code></td><td>47</td><td>кОм</td><td>Верхній резистор дільника (від «плюса» акумулятора до GPIO34). Має відповідати реально встановленому резистору.</td></tr>
+<tr><td><code>BATTERY_DIVIDER_R_BOTTOM_KOHM</code></td><td>100</td><td>кОм</td><td>Нижній резистор дільника (від GPIO34 до GND).</td></tr>
+<tr><td><code>BATTERY_CALIBRATION_FACTOR</code></td><td>1.00</td><td>—</td><td>Коефіцієнт калібрування: напруга за мультиметром ÷ напруга в Serial.</td></tr>
+<tr><td><code>BATTERY_LOW_VOLTAGE</code></td><td>3.50</td><td>В</td><td>Поріг «низький заряд» (1 пара імпульсів). Напруга одного Li-ion елемента під легким навантаженням. Має бути більшим за BATTERY_CRITICAL_VOLTAGE.</td></tr>
+<tr><td><code>BATTERY_CRITICAL_VOLTAGE</code></td><td>3.30</td><td>В</td><td>Поріг «критичний заряд» (2 пари імпульсів). Має бути більшим за BATTERY_CUTOFF_WARNING.</td></tr>
+<tr><td><code>BATTERY_CUTOFF_WARNING</code></td><td>3.15</td><td>В</td><td>Поріг «дуже критичний заряд» (3 пари імпульсів): заряджайте негайно. Захист модуля TP4056 відключає акумулятор лише біля 2,4–2,5 В, тому попередження подається значно раніше.</td></tr>
+<tr><td><code>BATTERY_HYSTERESIS_V</code></td><td>0.10</td><td>В</td><td>Щоб повернутися на кращий рівень, напруга має піднятися над порогом на це значення. Запобігає «блиманню» попереджень біля порогу.</td></tr>
+<tr><td><code>BATTERY_FILTER_ALPHA</code></td><td>0.30</td><td>0–1</td><td>Згладжування напруги: частка нового вимірювання. Менше — плавніше, але повільніша реакція. При вимірюваннях кожні 5 с значення 0,30 дає усереднення приблизно за 15–20 с.</td></tr>
+<tr><td><code>BATTERY_READ_INTERVAL_MS</code></td><td>5000</td><td>мс</td><td>Як часто вимірюється напруга. Вимірювання виконується лише тоді, коли мотори не вібрують.</td></tr>
+<tr><td><code>BATTERY_FIRST_WARNING_DELAY_MS</code></td><td>5000</td><td>мс</td><td>Час після старту (або після погіршення рівня заряду) до першого попередження.</td></tr>
+<tr><td><code>LOW_BATTERY_WARNING_INTERVAL_MS</code></td><td>60000</td><td>мс</td><td>Період повторення попередження «низький заряд».</td></tr>
+<tr><td><code>CRITICAL_BATTERY_WARNING_INTERVAL_MS</code></td><td>15000</td><td>мс</td><td>Період повторення попередження «критичний заряд».</td></tr>
+<tr><td><code>VERY_CRITICAL_WARNING_INTERVAL_MS</code></td><td>5000</td><td>мс</td><td>Період повторення попередження «дуже критичний заряд».</td></tr>
+<tr><td><code>LOW_BATTERY_WARNING_PAIRS</code><br><code>CRITICAL_BATTERY_WARNING_PAIRS</code><br><code>VERY_CRITICAL_BATTERY_WARNING_PAIRS</code></td><td>1 / 2 / 3</td><td>пар</td><td>Кількість пар імпульсів для кожного рівня: низький / критичний / дуже критичний.</td></tr>
+<tr><td><code>BATTERY_PAIR_PULSE_ON_MS</code></td><td>130</td><td>мс</td><td>Тривалість одного імпульсу в парі.</td></tr>
+<tr><td><code>BATTERY_PAIR_INNER_OFF_MS</code></td><td>110</td><td>мс</td><td>Пауза між двома імпульсами всередині пари.</td></tr>
+<tr><td><code>BATTERY_PAIR_GAP_MS</code></td><td>450</td><td>мс</td><td>Пауза між парами.</td></tr>
+<tr><td><code>BATTERY_ADC_SAMPLES</code></td><td>16</td><td>шт.</td><td>Скільки показань АЦП усереднюється за одне вимірювання (між ними пауза BATTERY_ADC_SAMPLE_DELAY_MS = 2 мс). Більше — менше шуму, але довше блокується програма під час вимірювання (≈ 32 мс).</td></tr>
+</tbody></table></div>
+<h3>5. Службові сигнали та діагностика</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Параметр</th><th>За замовчуванням</th><th>Одиниця</th><th>Опис і вплив</th></tr></thead><tbody>
+<tr><td><code>MOTOR_SELF_TEST_ON_MS</code></td><td>180</td><td>мс</td><td>Тривалість вібрації кожного мотора під час самотесту при старті (порядок: лівий → центральний → правий).</td></tr>
+<tr><td><code>MOTOR_SELF_TEST_OFF_MS</code></td><td>150</td><td>мс</td><td>Пауза між моторами під час самотесту.</td></tr>
+<tr><td><code>SENSOR_ERROR_PULSES</code></td><td>9</td><td>шт.</td><td>Кількість коротких імпульсів усіма моторами, якщо при старті не запустився хоча б один датчик.</td></tr>
+<tr><td><code>SENSOR_ERROR_ON_MS</code><br><code>SENSOR_ERROR_OFF_MS</code></td><td>120 / 120</td><td>мс</td><td>Тривалість імпульсу / пауза в сигналі помилки датчиків.</td></tr>
+<tr><td><code>LOG_ALERT_EVENTS</code></td><td>true</td><td>true / false</td><td>Друкувати в Serial моменти вмикання й вимикання сигналу по кожному датчику (корисно для пошуку хибних спрацювань).</td></tr>
+<tr><td><code>LOG_BATTERY</code></td><td>true</td><td>true / false</td><td>Друкувати стан батареї в Serial при кожному вимірюванні.</td></tr>
+<tr><td><code>DISTANCE_PRINT_INTERVAL_MS</code></td><td>300</td><td>мс</td><td>Як часто друкувати відстані в Serial Monitor.</td></tr>
+</tbody></table></div>
+<h3>6. Апаратна частина (піни та адреси)</h3>
+<p>Змінюйте ці значення лише тоді, коли змінилась схема підключення.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Параметр</th><th>За замовчуванням</th><th>Одиниця</th><th>Опис і вплив</th></tr></thead><tbody>
+<tr><td><code>I2C_SDA</code></td><td>21</td><td>GPIO</td><td>Лінія даних I2C (SDA) датчиків.</td></tr>
+<tr><td><code>I2C_SCL</code></td><td>22</td><td>GPIO</td><td>Лінія тактування I2C (SCL) датчиків.</td></tr>
+<tr><td><code>XSHUT_LEFT</code><br><code>XSHUT_CENTER</code><br><code>XSHUT_RIGHT</code></td><td>25 / 26 / 27</td><td>GPIO</td><td>Піни вимкнення (XSHUT) лівого, центрального й правого датчиків; потрібні для призначення унікальних адрес I2C при старті.</td></tr>
+<tr><td><code>MOTOR_LEFT</code><br><code>MOTOR_CENTER</code><br><code>MOTOR_RIGHT</code></td><td>16 / 17 / 18</td><td>GPIO</td><td>Керуючі виходи лівого, центрального й правого вібромоторів (на входи PWMA/PWMB драйверів TB6612FNG). При старті самотест іде в порядку лівий → центральний → правий; перевірте, що фізичні мотори вібрують у цьому порядку.</td></tr>
+<tr><td><code>BATTERY_ADC_PIN</code></td><td>34</td><td>GPIO</td><td>Вхід АЦП для напруги акумулятора (середня точка дільника). Використовуйте пін ADC1 (GPIO32–39).</td></tr>
+<tr><td><code>ADDR_LEFT</code><br><code>ADDR_CENTER</code><br><code>ADDR_RIGHT</code></td><td>0x30 / 0x31 / 0x32</td><td>адреса I2C</td><td>Адреси I2C, які призначаються датчикам при старті. Змінюйте лише у разі конфлікту з іншими пристроями I2C.</td></tr>
+<tr><td><code>MOTOR_ON</code><br><code>MOTOR_OFF</code></td><td>HIGH / LOW</td><td>рівень</td><td>Логічні рівні, що вмикають і вимикають мотор. Поміняйте місцями, якщо драйвер працює навпаки.</td></tr>
+</tbody></table></div>
+</section>

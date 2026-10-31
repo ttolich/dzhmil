@@ -1,0 +1,93 @@
+<style>
+/* Optional styling - remove or adapt to the site theme */
+.dzhmil-settings table { border-collapse: collapse; width: 100%; margin: 0.5em 0 1.5em; }
+.dzhmil-settings th, .dzhmil-settings td { border: 1px solid rgba(128,128,128,.45); padding: .45em .6em; text-align: left; vertical-align: top; }
+.dzhmil-settings th { background: rgba(128,128,128,.15); }
+.dzhmil-settings td:nth-child(2), .dzhmil-settings td:nth-child(3) { white-space: nowrap; }
+.dzhmil-settings code { font-size: .92em; word-break: break-word; }
+.dzhmil-settings .table-wrap { overflow-x: auto; }
+</style>
+<section class="dzhmil-settings" lang="en">
+<h2>“Dzhmil” sketch settings (version 1.7)</h2>
+<p>The settings are constants at the top of the sketch (main.cpp). After changing a value, re-upload the sketch to the controller. Verify every change in real-world tests: reaction-zone and filter parameters directly affect the user's safety.</p>
+<h3>1. Obstacle reaction zones</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Parameter</th><th>Default</th><th>Unit</th><th>Description and effect</th></tr></thead><tbody>
+<tr><td><code>CENTER_ALERT_DISTANCE_MM</code></td><td>1050</td><td>mm</td><td>Distance at which the center sensor starts warning. Higher: earlier warning, but more unnecessary alerts in tight spaces. Lower: less time to react. Keep it above VIBRO_VERY_FAR_BORDER_MM, otherwise the “very far” rhythm is never used.</td></tr>
+<tr><td><code>SIDE_ALERT_DISTANCE_MM</code></td><td>900</td><td>mm</td><td>Same for the left and right sensors. Decrease it if walls in narrow corridors cause constant alerts.</td></tr>
+<tr><td><code>DIRECTION_GROUP_MARGIN_MM</code></td><td>300</td><td>mm</td><td>If several sensors see obstacles within this margin of the nearest one, their motors vibrate together. Higher: several motors vibrate together more often (less precise direction). Lower: only the side of the nearest obstacle vibrates.</td></tr>
+<tr><td><code>ALERT_HYSTERESIS_MM</code></td><td>80</td><td>mm</td><td>Margin when leaving a zone: the signal stops only when the obstacle has moved beyond the zone border by more than this value. Higher: steadier at the border, but the signal stops later. Lower: the motors may twitch at the zone border.</td></tr>
+</tbody></table></div>
+<h3>2. Vibration rhythm by distance</h3>
+<p>The main cue for the user is the length of the pause: the closer the obstacle, the shorter the pause. The zone borders must decrease: VERY_FAR &gt; FAR &gt; MEDIUM &gt; CLOSE.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Parameter</th><th>Default</th><th>Unit</th><th>Description and effect</th></tr></thead><tbody>
+<tr><td><code>VIBRO_VERY_FAR_BORDER_MM</code></td><td>850</td><td>mm</td><td>Border between the “very far” zone (beyond this border) and the “far” zone.</td></tr>
+<tr><td><code>VIBRO_FAR_BORDER_MM</code></td><td>700</td><td>mm</td><td>Border between the “far” zone and the “medium distance” zone.</td></tr>
+<tr><td><code>VIBRO_MEDIUM_BORDER_MM</code></td><td>550</td><td>mm</td><td>Border between the “medium distance” zone and the “close” zone.</td></tr>
+<tr><td><code>VIBRO_CLOSE_BORDER_MM</code></td><td>400</td><td>mm</td><td>Border between the “close” zone and the “very close” zone.</td></tr>
+<tr><td><code>PATTERN_VERY_FAR</code></td><td>120 / 1200</td><td>ms (pulse / pause)</td><td>“Very far” zone: sparse single pulse.</td></tr>
+<tr><td><code>PATTERN_FAR</code></td><td>120 / 800</td><td>ms (pulse / pause)</td><td>“Far” zone: noticeably more frequent pulses.</td></tr>
+<tr><td><code>PATTERN_MEDIUM</code></td><td>140 / 450</td><td>ms (pulse / pause)</td><td>“Medium distance” zone.</td></tr>
+<tr><td><code>PATTERN_CLOSE</code></td><td>170 / 180</td><td>ms (pulse / pause)</td><td>“Close” zone.</td></tr>
+<tr><td><code>PATTERN_VERY_CLOSE</code></td><td>300 / 60</td><td>ms (pulse / pause)</td><td>“Very close” zone: almost continuous vibration.</td></tr>
+</tbody></table></div>
+<h3>3. Sensors and filtering</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Parameter</th><th>Default</th><th>Unit</th><th>Description and effect</th></tr></thead><tbody>
+<tr><td><code>SENSOR_TIMING_BUDGET_US</code></td><td>50000</td><td>µs</td><td>Duration of one sensor measurement. Higher: less noise and better performance in sunlight and at long range, but slower updates. Must not exceed SENSOR_CONTINUOUS_PERIOD_MS (50000 µs = 50 ms).</td></tr>
+<tr><td><code>SENSOR_CONTINUOUS_PERIOD_MS</code></td><td>70</td><td>ms</td><td>Interval between measurements. Lower: faster reaction, but more I2C bus load and higher power consumption. Must not be shorter than the measurement time (SENSOR_TIMING_BUDGET_US).</td></tr>
+<tr><td><code>SENSOR_MAX_VALID_DISTANCE_MM</code></td><td>5000</td><td>mm</td><td>Readings beyond this value are treated as invalid. Normally not changed.</td></tr>
+<tr><td><code>FILTER_WINDOW</code></td><td>3</td><td>pcs</td><td>Number of latest measurements in the median filter (odd number: 3 or 5). Higher: more robust against noise, but slower reaction.</td></tr>
+<tr><td><code>FILTER_MIN_SAMPLES</code></td><td>2</td><td>pcs</td><td>How many measurements confirm an obstacle. 2 = two in a row (delay ≈ 140 ms). 1 gives the fastest reaction, but a single false measurement can trigger vibration (not recommended). Must not exceed FILTER_WINDOW.</td></tr>
+<tr><td><code>MAX_BAD_READS</code></td><td>3</td><td>pcs</td><td>How many invalid measurements in a row are needed before the sensor is considered “empty” (no obstacle). Until then the previous value is kept.</td></tr>
+<tr><td><code>SENSOR_STALL_MS</code></td><td>500</td><td>ms</td><td>If a sensor delivers no new data for longer than this, it is considered hung and its last value is no longer used.</td></tr>
+<tr><td><code>SENSOR_READ_INTERVAL_MS</code></td><td>10</td><td>ms</td><td>How often the sensors are checked for new data. Normally not changed.</td></tr>
+<tr><td><code>I2C_CLOCK_HZ</code></td><td>100000</td><td>Hz</td><td>I2C bus speed. 100 kHz is more reliable with long wires; 400 kHz is faster but more sensitive to wiring and interference.</td></tr>
+</tbody></table></div>
+<h3>4. Battery monitoring (1S2P)</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Parameter</th><th>Default</th><th>Unit</th><th>Description and effect</th></tr></thead><tbody>
+<tr><td><code>BATTERY_DIVIDER_R_TOP_KOHM</code></td><td>47</td><td>kΩ</td><td>Upper divider resistor (from battery positive to GPIO34). Must match the installed resistor.</td></tr>
+<tr><td><code>BATTERY_DIVIDER_R_BOTTOM_KOHM</code></td><td>100</td><td>kΩ</td><td>Lower divider resistor (from GPIO34 to GND).</td></tr>
+<tr><td><code>BATTERY_CALIBRATION_FACTOR</code></td><td>1.00</td><td>—</td><td>Calibration factor: multimeter voltage ÷ Serial voltage.</td></tr>
+<tr><td><code>BATTERY_LOW_VOLTAGE</code></td><td>3.50</td><td>V</td><td>“Low charge” threshold (1 pair of pulses). Voltage of a single Li-ion cell under light load. Must be higher than BATTERY_CRITICAL_VOLTAGE.</td></tr>
+<tr><td><code>BATTERY_CRITICAL_VOLTAGE</code></td><td>3.30</td><td>V</td><td>“Critical charge” threshold (2 pairs of pulses). Must be higher than BATTERY_CUTOFF_WARNING.</td></tr>
+<tr><td><code>BATTERY_CUTOFF_WARNING</code></td><td>3.15</td><td>V</td><td>“Very critical charge” threshold (3 pairs of pulses): charge immediately. The TP4056 module protection cuts off the battery only at about 2.4–2.5 V, so the warning is given much earlier.</td></tr>
+<tr><td><code>BATTERY_HYSTERESIS_V</code></td><td>0.10</td><td>V</td><td>To return to a better level, the voltage must rise above the threshold by this amount. Prevents warning “flicker” near a threshold.</td></tr>
+<tr><td><code>BATTERY_FILTER_ALPHA</code></td><td>0.30</td><td>0–1</td><td>Voltage smoothing: share of the new measurement. Lower: smoother but slower to react. With measurements every 5 s, 0.30 averages over roughly 15–20 s.</td></tr>
+<tr><td><code>BATTERY_READ_INTERVAL_MS</code></td><td>5000</td><td>ms</td><td>How often the voltage is measured. A measurement is taken only while the motors are not vibrating.</td></tr>
+<tr><td><code>BATTERY_FIRST_WARNING_DELAY_MS</code></td><td>5000</td><td>ms</td><td>Time after startup (or after the charge level worsens) until the first warning sounds.</td></tr>
+<tr><td><code>LOW_BATTERY_WARNING_INTERVAL_MS</code></td><td>60000</td><td>ms</td><td>Repeat period of the “low charge” warning.</td></tr>
+<tr><td><code>CRITICAL_BATTERY_WARNING_INTERVAL_MS</code></td><td>15000</td><td>ms</td><td>Repeat period of the “critical charge” warning.</td></tr>
+<tr><td><code>VERY_CRITICAL_WARNING_INTERVAL_MS</code></td><td>5000</td><td>ms</td><td>Repeat period of the “very critical charge” warning.</td></tr>
+<tr><td><code>LOW_BATTERY_WARNING_PAIRS</code><br><code>CRITICAL_BATTERY_WARNING_PAIRS</code><br><code>VERY_CRITICAL_BATTERY_WARNING_PAIRS</code></td><td>1 / 2 / 3</td><td>pairs</td><td>Number of pulse pairs for each level: low / critical / very critical.</td></tr>
+<tr><td><code>BATTERY_PAIR_PULSE_ON_MS</code></td><td>130</td><td>ms</td><td>Duration of one pulse within a pair.</td></tr>
+<tr><td><code>BATTERY_PAIR_INNER_OFF_MS</code></td><td>110</td><td>ms</td><td>Pause between the two pulses inside a pair.</td></tr>
+<tr><td><code>BATTERY_PAIR_GAP_MS</code></td><td>450</td><td>ms</td><td>Pause between pairs.</td></tr>
+<tr><td><code>BATTERY_ADC_SAMPLES</code></td><td>16</td><td>pcs</td><td>Number of ADC readings averaged per measurement (with a pause of BATTERY_ADC_SAMPLE_DELAY_MS = 2 ms between them). Higher: less noise, but the program is blocked longer during the measurement (≈ 32 ms).</td></tr>
+</tbody></table></div>
+<h3>5. Service signals and diagnostics</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Parameter</th><th>Default</th><th>Unit</th><th>Description and effect</th></tr></thead><tbody>
+<tr><td><code>MOTOR_SELF_TEST_ON_MS</code></td><td>180</td><td>ms</td><td>Vibration time of each motor during the self-test at startup (order: left → center → right).</td></tr>
+<tr><td><code>MOTOR_SELF_TEST_OFF_MS</code></td><td>150</td><td>ms</td><td>Pause between motors during the self-test.</td></tr>
+<tr><td><code>SENSOR_ERROR_PULSES</code></td><td>9</td><td>pcs</td><td>Number of short pulses on all motors if at least one sensor failed to start at power-up.</td></tr>
+<tr><td><code>SENSOR_ERROR_ON_MS</code><br><code>SENSOR_ERROR_OFF_MS</code></td><td>120 / 120</td><td>ms</td><td>Pulse duration / pause in the sensor error signal.</td></tr>
+<tr><td><code>LOG_ALERT_EVENTS</code></td><td>true</td><td>true / false</td><td>Print to Serial the moments when the signal turns on and off for each sensor (useful for finding the cause of false alerts).</td></tr>
+<tr><td><code>LOG_BATTERY</code></td><td>true</td><td>true / false</td><td>Print the battery status to Serial at every measurement.</td></tr>
+<tr><td><code>DISTANCE_PRINT_INTERVAL_MS</code></td><td>300</td><td>ms</td><td>How often distances are printed to the Serial Monitor.</td></tr>
+</tbody></table></div>
+<h3>6. Hardware (pins and addresses)</h3>
+<p>Change these values only if the wiring has changed.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Parameter</th><th>Default</th><th>Unit</th><th>Description and effect</th></tr></thead><tbody>
+<tr><td><code>I2C_SDA</code></td><td>21</td><td>GPIO</td><td>I2C data line (SDA) of the sensors.</td></tr>
+<tr><td><code>I2C_SCL</code></td><td>22</td><td>GPIO</td><td>I2C clock line (SCL) of the sensors.</td></tr>
+<tr><td><code>XSHUT_LEFT</code><br><code>XSHUT_CENTER</code><br><code>XSHUT_RIGHT</code></td><td>25 / 26 / 27</td><td>GPIO</td><td>Shutdown pins of the left, center and right sensors; used to assign unique I2C addresses at startup.</td></tr>
+<tr><td><code>MOTOR_LEFT</code><br><code>MOTOR_CENTER</code><br><code>MOTOR_RIGHT</code></td><td>16 / 17 / 18</td><td>GPIO</td><td>Control outputs of the left, center and right vibration motors (to the PWMA/PWMB inputs of the TB6612FNG drivers). At startup the self-test runs left → center → right; check that the physical motors vibrate in this order.</td></tr>
+<tr><td><code>BATTERY_ADC_PIN</code></td><td>34</td><td>GPIO</td><td>ADC input for the battery voltage (midpoint of the divider). Use an ADC1 pin (GPIO32–39).</td></tr>
+<tr><td><code>ADDR_LEFT</code><br><code>ADDR_CENTER</code><br><code>ADDR_RIGHT</code></td><td>0x30 / 0x31 / 0x32</td><td>I2C address</td><td>I2C addresses assigned to the sensors at startup. Change only if they conflict with other I2C devices.</td></tr>
+<tr><td><code>MOTOR_ON</code><br><code>MOTOR_OFF</code></td><td>HIGH / LOW</td><td>level</td><td>Logic levels that switch a motor on and off. Swap them if the driver works inversely.</td></tr>
+</tbody></table></div>
+</section>
