@@ -135,6 +135,7 @@ body {
 }
 
 .characteristics-list {
+  font-size: 1.15rem;
   margin-top: 0;
   padding-left: 1.4rem;
 }
@@ -200,3 +201,9 @@ body {
     height: 0;
 }
 
+.responsive-img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
